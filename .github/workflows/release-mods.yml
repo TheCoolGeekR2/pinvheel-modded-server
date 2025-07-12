@@ -1,0 +1,35 @@
+name: Release Technic Mods ZIP
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set release tag and name
+        id: vars
+        run: |
+          TAG=release-$(date +'%Y%m%d-%H%M%S')
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Zip mods folder
+        run: |
+          mkdir -p build
+          zip -r build/technic-mods.zip mods
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.vars.outputs.tag }}
+          name: "Technic Mods - ${{ steps.vars.outputs.tag }}"
+          files: build/technic-mods.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

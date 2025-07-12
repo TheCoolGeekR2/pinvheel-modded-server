@@ -6,6 +6,9 @@ on:
       - master
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
@@ -23,13 +26,13 @@ jobs:
       - name: Zip mods folder
         run: |
           mkdir -p build
-          zip -r build/technic-mods.zip mods
+          zip -r build/modpack.zip mods bin
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.vars.outputs.tag }}
           name: "Technic Mods - ${{ steps.vars.outputs.tag }}"
-          files: build/technic-mods.zip
+          files: build/modpack.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
